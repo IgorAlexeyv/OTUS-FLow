@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Flow"
 include(":app")
+include(":app:experiments")
