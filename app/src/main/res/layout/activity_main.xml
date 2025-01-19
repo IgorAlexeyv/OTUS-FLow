@@ -30,11 +30,11 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/groupUsers"
-            app:singleLine="true"
-            app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
-            app:singleSelection="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
+            app:singleLine="true"
+            app:singleSelection="true">
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -70,13 +70,48 @@
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/groupTags"
-            app:singleLine="true"
-            app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
+            app:singleLine="true">
 
         </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="200dp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="?attr/colorPrimary"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/groupNotes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_small_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:spanCount="2"
+        tools:listitem="@layout/vh_note" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
