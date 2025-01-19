@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
+import ru.otus.flow.data.Tag
 import ru.otus.flow.data.User
+import ru.otus.flow.data.getTagsForUser
 import ru.otus.flow.data.getUsers
 import ru.otus.flow.databinding.ActivityMainBinding
 
@@ -28,6 +30,12 @@ class MainActivity : AppCompatActivity() {
                 val userId = groupUsers.findViewById<Chip>(chipId).tag as Int
                 selectUser(userId)
             }
+            groupTags.setOnCheckedStateChangeListener { _, ids ->
+                val tags = ids
+                    .map { id -> groupTags.findViewById<Chip>(id).tag as Int }
+                    .toSet()
+                selectTags(tags)
+            }
         }
 
         loadUsers()
@@ -48,6 +56,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun populateTags(tags: List<Tag>) {
+        val group = binding.groupTags
+        group.removeAllViews()
+        tags.forEach {
+            val chip = Chip(group.context).apply {
+                text = it.name
+                tag = it.id
+                isClickable = true
+                isCheckable = true
+                isFocusable = true
+            }
+            group.addView(chip)
+        }
+    }
+
+    private fun hideTags() {
+        binding.controlsTags.visibility = android.view.View.GONE
+    }
+
+    private fun showTags() {
+        binding.controlsTags.visibility = android.view.View.VISIBLE
+    }
+
     // region Logic
 
     private fun loadUsers() {
@@ -64,6 +95,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectUser(userId: Int?) {
         Log.i(TAG, "Selected user: $userId")
+        loadTags(userId)
+    }
+
+    private fun loadTags(userId: Int?) {
+        Log.i(TAG, "Loading tags for user: $userId")
+        hideTags()
+        if (null == userId) {
+            populateTags(emptyList())
+            return
+        }
+
+        lifecycleScope.launch {
+            val result = getTagsForUser(userId)
+            if (result.isSuccess) {
+                populateTags(result.getOrThrow())
+                showTags()
+            } else {
+                Log.e(TAG, "Failed to load tags", result.exceptionOrNull())
+            }
+        }
+    }
+
+    private fun selectTags(tags: Set<Int>) {
+        Log.i(TAG, "Selected tags: $tags")
     }
 
     // endregion

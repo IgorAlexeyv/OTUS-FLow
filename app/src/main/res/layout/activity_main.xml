@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <HorizontalScrollView
+        android:id="@+id/scrollUsers"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -32,6 +33,45 @@
             app:singleLine="true"
             app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
             app:singleSelection="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/controlsTags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="lblTags,scrollTags" />
+
+    <TextView
+        android:id="@+id/lblTags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/lbl_tags"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scrollUsers" />
+
+    <HorizontalScrollView
+        android:id="@+id/scrollTags"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_small_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblTags">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/groupTags"
+            app:singleLine="true"
+            app:chipSpacingHorizontal="@dimen/activity_small_horizontal_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 

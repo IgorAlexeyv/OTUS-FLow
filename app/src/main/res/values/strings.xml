@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Flow</string>
     <string name="lbl_users">Users</string>
+    <string name="lbl_tags">Tags</string>
 </resources>
