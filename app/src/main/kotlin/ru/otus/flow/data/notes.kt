@@ -24,6 +24,11 @@ suspend fun getNotesForUser(userId: Int, tags: Set<Int>): Result<List<Note>> {
 
 fun getNotesFlow(userId: Int, tags: Set<Int>): Flow<List<Note>> = flow {
     val notes = getNotesForUser(userId, tags).getOrThrow()
+    if (notes.isEmpty()) {
+        emit(emptyList())
+        return@flow
+    }
+
     while(currentCoroutineContext().isActive) {
         val notesFeed = mutableListOf<Note>()
         for (note in notes) {
