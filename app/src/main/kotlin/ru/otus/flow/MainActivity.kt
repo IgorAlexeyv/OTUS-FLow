@@ -61,16 +61,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun populateTags(tags: List<Tag>) {
+    private fun populateTags(tags: List<Pair<Tag, Boolean>>) {
         val group = binding.groupTags
         group.removeAllViews()
         tags.forEach {
             val chip = Chip(group.context).apply {
-                text = it.name
-                tag = it.id
+                text = it.first.name
+                tag = it.first.id
                 isClickable = true
                 isCheckable = true
                 isFocusable = true
+                isChecked = it.second
             }
             group.addView(chip)
         }
@@ -114,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun subscribeUserContent() {
         getUserContent.state.onEach { content ->
-            populateTags(content.tags.toList())
+            populateTags(content.tags)
             populateNotes(content.notes)
             if (content.tags.isEmpty()) {
                 hideTags()

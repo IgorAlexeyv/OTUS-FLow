@@ -40,15 +40,19 @@ class GetUserContent {
     }
 
     val state: Flow<UserContent> = userFlow.transformLatest { user ->
-        emit(UserContent(user, emptySet(), emptyList()))
+        emit(UserContent(user, emptyList(), emptyList()))
 
         getTagsFlow(user).collectLatest { tags ->
-            emit(UserContent(user, tags.toSet(), emptyList()))
+            emit(UserContent(user, tags.map { it to false }, emptyList()))
 
             tagsFlow.onStart { emit(emptySet()) }.collectLatest { selectedTags ->
                 emitAll(
                     getNotesFlow(user, selectedTags).map {
-                        UserContent(user, tags.toSet(), it)
+                        UserContent(
+                            user,
+                            tags.map { tag -> tag to selectedTags.contains(tag.id) },
+                            it
+                        )
                     }
                 )
             }
@@ -58,6 +62,6 @@ class GetUserContent {
 
 data class UserContent(
     val userId: Int?,
-    val tags: Set<Tag>,
+    val tags: List<Pair<Tag, Boolean>>,
     val notes: List<Note>
 )
