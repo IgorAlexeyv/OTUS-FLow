@@ -1,8 +1,10 @@
 package ru.otus.flow.data
 
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
 import kotlin.random.Random
 
 data class Note(
@@ -22,11 +24,14 @@ suspend fun getNotesForUser(userId: Int, tags: Set<Int>): Result<List<Note>> {
 
 fun getNotesFlow(userId: Int, tags: Set<Int>): Flow<List<Note>> = flow {
     val notes = getNotesForUser(userId, tags).getOrThrow()
-    val notesFeed = mutableListOf<Note>()
-    for (note in notes) {
-        notesFeed.add(note)
-        emit(notesFeed.toList())
-        delay(FEED_DELAY)
+    while(currentCoroutineContext().isActive) {
+        val notesFeed = mutableListOf<Note>()
+        for (note in notes) {
+            notesFeed.add(note)
+            emit(notesFeed.toList())
+            delay(FEED_DELAY)
+        }
+        delay(REFRESH_DELAY)
     }
 }
 
