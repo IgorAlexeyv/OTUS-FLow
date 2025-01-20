@@ -43,4 +43,5 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.kotlin.coroutines.android)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 }

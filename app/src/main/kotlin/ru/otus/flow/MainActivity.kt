@@ -3,13 +3,15 @@ package ru.otus.flow
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import ru.otus.flow.data.Note
 import ru.otus.flow.data.Tag
 import ru.otus.flow.data.User
-import ru.otus.flow.data.getNotesForUser
+import ru.otus.flow.data.getNotesFlow
 import ru.otus.flow.data.getTagsForUser
 import ru.otus.flow.data.getUsers
 import ru.otus.flow.databinding.ActivityMainBinding
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun populateNotes(notes: List<Note>) {
+        Log.i(TAG, "Populating notes: $notes")
         adapter.submitList(notes)
     }
 
@@ -160,11 +163,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            val result = getNotesForUser(userId, tags)
-            if (result.isSuccess) {
-                populateNotes(result.getOrThrow())
-            } else {
-                Log.e(TAG, "Failed to load notes", result.exceptionOrNull())
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getNotesFlow(userId, tags).collect {
+                    populateNotes(it)
+                }
             }
         }
     }

@@ -1,6 +1,8 @@
 package ru.otus.flow.data
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
 data class Note(
@@ -16,6 +18,11 @@ data class Note(
 suspend fun getNotesForUser(userId: Int, tags: Set<Int>): Result<List<Note>> {
     delay(NETWORK_DELAY)
     return Result.success(notes[userId]?.filter { notes -> notes.tags.any { tags.contains(it) } } ?: emptyList())
+}
+
+fun getNotesFlow(userId: Int, tags: Set<Int>): Flow<List<Note>> = flow {
+    emit(emptyList())
+    emit(getNotesForUser(userId, tags).getOrThrow())
 }
 
 internal val notes: Map<Int, List<Note>> = users.associate {
