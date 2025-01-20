@@ -6,6 +6,11 @@ package ru.otus.flow.data
 const val NETWORK_DELAY = 500L
 
 /**
+ * Feed delay
+ */
+const val FEED_DELAY = 200L
+
+/**
  * Minimum and maximum number of notes
  */
 const val MIN_NOTES = 1

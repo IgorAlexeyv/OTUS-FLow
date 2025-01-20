@@ -21,8 +21,13 @@ suspend fun getNotesForUser(userId: Int, tags: Set<Int>): Result<List<Note>> {
 }
 
 fun getNotesFlow(userId: Int, tags: Set<Int>): Flow<List<Note>> = flow {
-    emit(emptyList())
-    emit(getNotesForUser(userId, tags).getOrThrow())
+    val notes = getNotesForUser(userId, tags).getOrThrow()
+    val notesFeed = mutableListOf<Note>()
+    for (note in notes) {
+        notesFeed.add(note)
+        emit(notesFeed.toList())
+        delay(FEED_DELAY)
+    }
 }
 
 internal val notes: Map<Int, List<Note>> = users.associate {

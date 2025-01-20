@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.otus.flow.data.Note
 import ru.otus.flow.data.Tag
@@ -108,6 +109,8 @@ class MainActivity : AppCompatActivity() {
             .toSet()
     }
 
+    private var feedSubscription: Job? = null
+
     private fun loadUsers() {
         Log.i(TAG, "Loading users")
         lifecycleScope.launch {
@@ -155,6 +158,8 @@ class MainActivity : AppCompatActivity() {
     private fun loadNotes() {
         val userId = getSelectedUser()
         val tags = getSelectedTags()
+        feedSubscription?.cancel()
+
         Log.i(TAG, "Loading notes for user: $userId and tags: $tags")
 
         if (null == userId) {
@@ -162,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        lifecycleScope.launch {
+        feedSubscription = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getNotesFlow(userId, tags).collect {
                     populateNotes(it)
