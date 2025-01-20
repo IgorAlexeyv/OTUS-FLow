@@ -17,12 +17,15 @@ data class Note(
 /**
  * Returns notes for user
  */
-suspend fun getNotesForUser(userId: Int, tags: Set<Int>): Result<List<Note>> {
+suspend fun getNotesForUser(userId: Int?, tags: Set<Int>): Result<List<Note>> {
+    if (null == userId) {
+        return Result.success(emptyList())
+    }
     delay(NETWORK_DELAY)
     return Result.success(notes[userId]?.filter { notes -> notes.tags.any { tags.contains(it) } } ?: emptyList())
 }
 
-fun getNotesFlow(userId: Int, tags: Set<Int>): Flow<List<Note>> = flow {
+fun getNotesFlow(userId: Int?, tags: Set<Int>): Flow<List<Note>> = flow {
     val notes = getNotesForUser(userId, tags).getOrThrow()
     if (notes.isEmpty()) {
         emit(emptyList())
