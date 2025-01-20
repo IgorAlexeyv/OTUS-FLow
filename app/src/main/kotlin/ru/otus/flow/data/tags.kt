@@ -1,6 +1,8 @@
 package ru.otus.flow.data
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * Tag data
@@ -16,6 +18,14 @@ data class Tag(
 suspend fun getTagsForUser(userId: Int): Result<List<Tag>> {
     delay(NETWORK_DELAY)
     return Result.success(tags[userId] ?: emptyList())
+}
+
+fun getTagsFlow(userId: Int?): Flow<List<Tag>> = flow {
+    emit(emptyList())
+    if (null != userId) {
+        val tags = getTagsForUser(userId).getOrThrow()
+        emit(tags)
+    }
 }
 
 internal val tags = mapOf(

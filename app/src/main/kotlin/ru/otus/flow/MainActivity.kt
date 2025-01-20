@@ -8,12 +8,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.otus.flow.data.Note
 import ru.otus.flow.data.Tag
 import ru.otus.flow.data.User
 import ru.otus.flow.data.getNotesFlow
-import ru.otus.flow.data.getTagsForUser
+import ru.otus.flow.data.getTagsFlow
 import ru.otus.flow.data.getUsers
 import ru.otus.flow.databinding.ActivityMainBinding
 
@@ -109,6 +111,7 @@ class MainActivity : AppCompatActivity() {
             .toSet()
     }
 
+    private var tagsSubscription: Job? = null
     private var feedSubscription: Job? = null
 
     private fun loadUsers() {
@@ -130,24 +133,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadTags() {
         val userId = getSelectedUser()
+        tagsSubscription?.cancel()
         Log.i(TAG, "Loading tags for user: $userId")
-        hideTags()
-        populateNotes(emptyList())
-        if (null == userId) {
-            populateTags(emptyList())
-            return
-        }
 
-        lifecycleScope.launch {
-            val result = getTagsForUser(userId)
-            if (result.isSuccess) {
-                populateTags(result.getOrThrow())
-                showTags()
-                loadNotes()
-            } else {
-                Log.e(TAG, "Failed to load tags", result.exceptionOrNull())
+        tagsSubscription = getTagsFlow(userId)
+            .onEach { tags ->
+                populateTags(tags)
+                if (tags.isEmpty()) {
+                    hideTags()
+                    populateNotes(emptyList())
+                } else {
+                    showTags()
+                    loadNotes()
+                }
             }
-        }
+            .launchIn(lifecycleScope)
     }
 
     private fun selectTags(tags: Set<Int>) {
