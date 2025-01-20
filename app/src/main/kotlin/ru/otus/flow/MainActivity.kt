@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import ru.otus.flow.data.Note
 import ru.otus.flow.data.Tag
 import ru.otus.flow.data.User
-import ru.otus.flow.data.getNotesFlow
 import ru.otus.flow.data.getTagsFlow
 import ru.otus.flow.data.getUsers
 import ru.otus.flow.databinding.ActivityMainBinding
@@ -162,14 +161,9 @@ class MainActivity : AppCompatActivity() {
 
         Log.i(TAG, "Loading notes for user: $userId and tags: $tags")
 
-        if (null == userId) {
-            populateNotes(emptyList())
-            return
-        }
-
         feedSubscription = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getNotesFlow(userId, tags).collect {
+                GetUserNotes(userId, tags).state.collect {
                     populateNotes(it)
                 }
             }
